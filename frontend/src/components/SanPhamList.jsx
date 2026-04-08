@@ -14,7 +14,7 @@ const SanPhamList = () => {
     const [showForm, setShowForm] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     
-    // 3. STATE CHO FORM NHẬP LIỆU (Thêm duongDanHinh)
+    // 3. STATE CHO FORM NHẬP LIỆU
     const [formData, setFormData] = useState({
         maSanPham: '', tenSanPham: '', donGia: '', maLoaiSanPham: 'LSP01', trangThai: 'Đang bán', duongDanHinh: ''
     });
@@ -64,15 +64,17 @@ const SanPhamList = () => {
             donGia: sp.donGia,
             maLoaiSanPham: sp.maLoaiSanPham || 'LSP01',
             trangThai: sp.trangThai,
-            duongDanHinh: sp.duongDanHinh || '' // Lấy ảnh hiện tại
+            duongDanHinh: sp.duongDanHinh || '' 
         });
         
-        if (sp.danhSachCongThuc) {
+        // KIỂM TRA VÀ MAP CÔNG THỨC TỪ API
+        if (sp.danhSachCongThuc && sp.danhSachCongThuc.length > 0) {
             const mappedCT = sp.danhSachCongThuc.map(ct => {
+                // Tìm thông tin tên nguyên liệu từ khoNguyenLieu dựa trên ID
                 const nlInfo = khoNguyenLieu.find(nl => nl.maNguyenLieu === ct.id.maNguyenLieu);
                 return {
                     maNguyenLieu: ct.id.maNguyenLieu,
-                    tenNguyenLieu: nlInfo ? nlInfo.tenNguyenLieu : (ct.nguyenLieu?.tenNguyenLieu || 'Đang tải...'),
+                    tenNguyenLieu: nlInfo ? nlInfo.tenNguyenLieu : (ct.nguyenLieu?.tenNguyenLieu || 'N/A'),
                     soLuong: ct.soLuong,
                     donViTinh: nlInfo ? nlInfo.donViTinh : (ct.nguyenLieu?.donViTinh || '')
                 };
@@ -88,6 +90,26 @@ const SanPhamList = () => {
         if (window.confirm("Xóa sản phẩm này sẽ xóa luôn công thức của nó. Tiếp tục?")) {
             await api.delete(`/san-pham/${maSanPham}`);
             loadData();
+        }
+    };
+
+    // HÀM UPLOAD ẢNH (GỌI ĐẾN ENDPOINT MỚI TẠO)
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', file);
+
+        try {
+            const response = await api.post('/upload', uploadFormData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            // Cập nhật link ảnh vào state formData
+            setFormData(prev => ({ ...prev, duongDanHinh: response.data }));
+        } catch (error) {
+            console.error("Lỗi upload:", error);
+            alert("Lỗi khi tải ảnh lên máy chủ (Kiểm tra cổng 8080 và Controller)!");
         }
     };
 
@@ -113,7 +135,7 @@ const SanPhamList = () => {
             tenSanPham: formData.tenSanPham,
             donGia: formData.donGia,
             trangThai: formData.trangThai,
-            duongDanHinh: formData.duongDanHinh, // Gửi link ảnh xuống DB
+            duongDanHinh: formData.duongDanHinh, 
             loaiSanPham: { maLoaiSanPham: formData.maLoaiSanPham },
             danhSachCongThuc: congThuc.map(ct => ({
                 id: { maSanPham: formData.maSanPham, maNguyenLieu: ct.maNguyenLieu },
@@ -129,21 +151,15 @@ const SanPhamList = () => {
             loadData();
         } catch (error) {
             console.error(error);
-            alert("Có lỗi khi lưu, vui lòng kiểm tra Console!");
+            alert("Có lỗi khi lưu sản phẩm!");
         }
     };
 
-    // ==========================================
-    // BỘ LỌC TÌM KIẾM SẢN PHẨM
-    // ==========================================
     const filteredSanPhams = sanPhams.filter(sp => 
         sp.tenSanPham.toLowerCase().includes(searchTerm.toLowerCase()) ||
         sp.maSanPham.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // ==========================================
-    // RENDER MÀN HÌNH 2: FORM THÊM / SỬA 
-    // ==========================================
     if (showForm) {
         return (
             <div className="container mt-4">
@@ -153,25 +169,25 @@ const SanPhamList = () => {
                 </div>
 
                 <div className="row">
-                    {/* Cột thông tin & Ảnh */}
                     <div className="col-md-5">
                         <div className="card shadow-sm mb-3">
                             <div className="card-header bg-dark text-white">Thông tin & Hình ảnh</div>
                             <div className="card-body">
-                                {/* KHU VỰC ẢNH SẢN PHẨM */}
                                 <div className="mb-3 p-3 bg-light rounded border">
-                                    <label className="fw-bold text-primary">Ảnh Sản Phẩm (Link URL)</label>
-                                    <div className="d-flex gap-2 mt-1">
-                                        <input type="text" className="form-control" placeholder="Dán link ảnh (http://...)"
-                                            value={formData.duongDanHinh} onChange={e => setFormData({...formData, duongDanHinh: e.target.value})} />
-                                        <button className="btn btn-outline-danger text-nowrap" onClick={() => setFormData({...formData, duongDanHinh: ''})}>Xóa ảnh</button>
+                                    <label className="fw-bold text-primary small">Ảnh Sản Phẩm (Tải lên từ máy)</label>
+                                    <div className="mt-1">
+                                        <input 
+                                            type="file" 
+                                            className="form-control" 
+                                            accept="image/*"
+                                            onChange={handleImageUpload} 
+                                        />
                                     </div>
-                                    {/* Khung Preview Ảnh */}
-                                    <div className="mt-2 text-center" style={{ minHeight: '120px', border: '1px dashed #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div className="mt-2 text-center" style={{ minHeight: '120px', border: '1px dashed #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
                                         {formData.duongDanHinh ? (
                                             <img src={formData.duongDanHinh} alt="Preview" style={{ maxWidth: '100%', maxHeight: '150px', objectFit: 'cover', borderRadius: '5px' }} />
                                         ) : (
-                                            <span className="text-muted small">Chưa có ảnh</span>
+                                            <span className="text-muted small">Chưa chọn ảnh</span>
                                         )}
                                     </div>
                                 </div>
@@ -202,7 +218,6 @@ const SanPhamList = () => {
                         </div>
                     </div>
 
-                    {/* Cột Công Thức (Giữ nguyên) */}
                     <div className="col-md-7">
                         <div className="card shadow-sm border-primary">
                             <div className="card-header bg-primary text-white">Xây dựng Công Thức (Từ Kho)</div>
@@ -264,15 +279,11 @@ const SanPhamList = () => {
         );
     }
 
-    // ==========================================
-    // RENDER MÀN HÌNH 1: BẢNG DANH SÁCH 
-    // ==========================================
     return (
         <div className="container mt-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="m-0">Quản lý Sản phẩm</h2>
                 <div className="d-flex gap-3">
-                    {/* KHU VỰC THANH TÌM KIẾM */}
                     <input 
                         type="text" 
                         className="form-control" 
@@ -305,7 +316,6 @@ const SanPhamList = () => {
                             ) : (
                                 filteredSanPhams.map((sp) => (
                                     <tr key={sp.maSanPham}>
-                                        {/* CỘT ẢNH SẢN PHẨM */}
                                         <td style={{ width: '80px' }}>
                                             {sp.duongDanHinh ? (
                                                 <img src={sp.duongDanHinh} alt="ảnh sp" style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }} />
