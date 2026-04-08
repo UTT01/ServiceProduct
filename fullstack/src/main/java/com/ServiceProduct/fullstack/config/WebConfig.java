@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:D:/ServiceProduct/uploads/"); 
-                // Lưu ý: phải có tiền tố 'file:' và dấu '/' ở cuối
+                // Sửa lại đường dẫn này cho khớp với FileUploadController
+                .addResourceLocations("file:D:/LDPlayer/ServiceProduct/uploads/"); 
     }
 }

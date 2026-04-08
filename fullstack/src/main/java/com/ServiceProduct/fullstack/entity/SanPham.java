@@ -3,7 +3,7 @@ package com.ServiceProduct.fullstack.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "SanPham")
 @Data @NoArgsConstructor @AllArgsConstructor
@@ -18,7 +18,7 @@ public class SanPham {
     @Column(name = "donGia")
     private Double donGia;
 
-    @Column(name = "duongDanHinh", columnDefinition = "TEXT")
+    @Column(name = "duongDanHinh", columnDefinition = "NVARCHAR(MAX)")
     private String duongDanHinh;
 
     @Column(name = "trangThai", columnDefinition = "NVARCHAR(20)")

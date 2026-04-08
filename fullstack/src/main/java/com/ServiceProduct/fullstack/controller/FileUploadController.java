@@ -18,12 +18,20 @@ public class FileUploadController {
     @PostMapping
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            // Lấy tên gốc để trích xuất đuôi file (ví dụ: .png, .jpg)
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            
+            // TẠO TÊN FILE MỚI: Chỉ gồm mã ngẫu nhiên UUID + đuôi file (Tuyệt đối không dùng tên gốc)
+            String fileName = UUID.randomUUID().toString() + extension;
+            
             Path path = Paths.get(UPLOAD_DIR + fileName);
             Files.createDirectories(path.getParent());
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
             
-            // Trả về URL để Frontend hiển thị (khớp với static-path-pattern /images/**)
             return ResponseEntity.ok("http://localhost:8080/images/" + fileName);
         } catch (IOException e) {
             return ResponseEntity.internalServerError().body("Lỗi upload: " + e.getMessage());

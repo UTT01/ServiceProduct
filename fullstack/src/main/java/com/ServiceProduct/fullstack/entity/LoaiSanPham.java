@@ -15,7 +15,7 @@ public class LoaiSanPham {
     @Column(name = "tenLoaiSanPham", columnDefinition = "NVARCHAR(100)")
     private String tenLoaiSanPham;
 
-    @Column(name = "duongDanHinh", columnDefinition = "TEXT")
+    @Column(name = "duongDanHinh", columnDefinition = "NVARCHAR(MAX)")
     private String duongDanHinh;
     @JsonIgnore
     @OneToMany(mappedBy = "loaiSanPham")
