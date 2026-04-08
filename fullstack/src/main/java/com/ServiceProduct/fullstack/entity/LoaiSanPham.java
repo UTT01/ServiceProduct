@@ -18,6 +18,6 @@ public class LoaiSanPham {
     @Column(name = "duongDanHinh", columnDefinition = "NVARCHAR(MAX)")
     private String duongDanHinh;
     @JsonIgnore
-    @OneToMany(mappedBy = "loaiSanPham")
+    @OneToMany(mappedBy = "loaiSanPham", cascade = CascadeType.ALL, orphanRemoval = true) // Cập nhật dòng này
     private List<SanPham> danhSachSanPham;
 }

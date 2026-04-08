@@ -207,6 +207,7 @@ const SanPhamList = () => {
                                     <input type="number" className="form-control" 
                                         value={formData.donGia} onChange={e => setFormData({...formData, donGia: e.target.value})} />
                                 </div>
+                                
                                 <div className="mb-2">
                                     <label>Trạng thái</label>
                                     <select className="form-select" value={formData.trangThai} onChange={e => setFormData({...formData, trangThai: e.target.value})}>
