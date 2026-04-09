@@ -6,10 +6,11 @@ const SanPhamList = () => {
     // 1. STATE QUẢN LÝ DỮ LIỆU
     const [sanPhams, setSanPhams] = useState([]);
     const [khoNguyenLieu, setKhoNguyenLieu] = useState([]);
-    
+    // Thêm state này vào đầu component SanPhamList
+    const [loaiSanPhams, setLoaiSanPhams] = useState([]);
     // STATE TÌM KIẾM
     const [searchTerm, setSearchTerm] = useState('');
-    
+    const [filterCategory, setFilterCategory] = useState('');
     // 2. STATE QUẢN LÝ GIAO DIỆN (UI)
     const [showForm, setShowForm] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -30,28 +31,38 @@ const SanPhamList = () => {
     }, []);
 
     const loadData = async () => {
-        try {
-            const [spRes, nlRes] = await Promise.all([
-                api.get('/san-pham'),
-                apiStore.get('/nguyen-lieu')
-            ]);
-            setSanPhams(spRes.data);
-            setKhoNguyenLieu(nlRes.data);
-            
-            if(nlRes.data.length > 0) {
-                setNlTempt({ maNguyenLieu: nlRes.data[0].maNguyenLieu, soLuong: 1 });
-            }
-        } catch (error) {
-            console.error("Lỗi lấy dữ liệu:", error);
+    try {
+        const [spRes, nlRes, lspRes] = await Promise.all([
+            api.get('/san-pham'),
+            apiStore.get('/nguyen-lieu'),
+            api.get('/loai-san-pham') // Thêm dòng này để lấy loại sản phẩm
+        ]);
+        setSanPhams(spRes.data);
+        setKhoNguyenLieu(nlRes.data);
+        setLoaiSanPhams(lspRes.data); // Lưu vào state
+        
+        if(nlRes.data.length > 0) {
+            setNlTempt({ maNguyenLieu: nlRes.data[0].maNguyenLieu, soLuong: 1 });
         }
-    };
+    } catch (error) {
+        console.error("Lỗi lấy dữ liệu:", error);
+    }
+};
 
     // ==========================================
     // CÁC HÀM XỬ LÝ SỰ KIỆN
     // ==========================================
     const handleAddNew = () => {
         setIsEditing(false);
-        setFormData({ maSanPham: '', tenSanPham: '', donGia: '', maLoaiSanPham: 'LSP01', trangThai: 'Đang bán', duongDanHinh: '' });
+        // Tự động tạo mã SP dựa trên thời gian hiện tại
+        setFormData({ 
+            maSanPham: 'SP' + Date.now(), 
+            tenSanPham: '', 
+            donGia: '', 
+            maLoaiSanPham: 'LSP01', 
+            trangThai: 'Đang bán', 
+            duongDanHinh: '' 
+        });
         setCongThuc([]);
         setShowForm(true);
     };
@@ -155,10 +166,21 @@ const SanPhamList = () => {
         }
     };
 
-    const filteredSanPhams = sanPhams.filter(sp => 
-        sp.tenSanPham.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        sp.maSanPham.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const uniqueCategories = [...new Set(sanPhams.map(sp => sp.tenLoaiSanPham || sp.maLoaiSanPham || 'Chưa phân loại'))];
+
+    // -- LOGIC LỌC KẾT HỢP (TÊN/MÃ + LOẠI SẢN PHẨM) --
+    const filteredSanPhams = sanPhams.filter(sp => {
+        // Lọc theo tên hoặc mã
+        const matchSearch = sp.tenSanPham.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            sp.maSanPham.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        // Lọc theo loại sản phẩm
+        const categoryName = sp.tenLoaiSanPham || sp.maLoaiSanPham || 'Chưa phân loại';
+        const matchCategory = filterCategory === '' || categoryName === filterCategory;
+
+        // Trả về true nếu thỏa mãn cả 2 điều kiện
+        return matchSearch && matchCategory;
+    });
 
     if (showForm) {
         return (
@@ -194,8 +216,13 @@ const SanPhamList = () => {
 
                                 <div className="mb-2">
                                     <label>Mã Sản Phẩm</label>
-                                    <input type="text" className="form-control" disabled={isEditing} 
-                                        value={formData.maSanPham} onChange={e => setFormData({...formData, maSanPham: e.target.value})} />
+                                    <input 
+                                        type="text" 
+                                        className="form-control" 
+                                        disabled // Khóa luôn ô này, không cho sửa trong mọi trường hợp
+                                        value={formData.maSanPham} 
+                                        onChange={e => setFormData({...formData, maSanPham: e.target.value})} 
+                                    />
                                 </div>
                                 <div className="mb-2">
                                     <label>Tên Sản Phẩm</label>
@@ -207,7 +234,20 @@ const SanPhamList = () => {
                                     <input type="number" className="form-control" 
                                         value={formData.donGia} onChange={e => setFormData({...formData, donGia: e.target.value})} />
                                 </div>
-                                
+                                <div className="mb-2">
+                                    <label>Loại sản phẩm</label>
+                                    <select 
+                                        className="form-select" 
+                                        value={formData.maLoaiSanPham} 
+                                        onChange={e => setFormData({...formData, maLoaiSanPham: e.target.value})}
+                                    >
+                                        {loaiSanPhams.map(loai => (
+                                            <option key={loai.maLoaiSanPham} value={loai.maLoaiSanPham}>
+                                                {loai.tenLoaiSanPham}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                                 <div className="mb-2">
                                     <label>Trạng thái</label>
                                     <select className="form-select" value={formData.trangThai} onChange={e => setFormData({...formData, trangThai: e.target.value})}>
@@ -285,6 +325,20 @@ const SanPhamList = () => {
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="m-0">Quản lý Sản phẩm</h2>
                 <div className="d-flex gap-3">
+                    {/* BỘ LỌC THEO LOẠI SẢN PHẨM MỚI THÊM */}
+                    <select 
+                        className="form-select border-primary" 
+                        style={{ width: '200px' }}
+                        value={filterCategory}
+                        onChange={e => setFilterCategory(e.target.value)}
+                    >
+                        <option value="">-- Tất cả loại --</option>
+                        {uniqueCategories.map((cat, index) => (
+                            <option key={index} value={cat}>{cat}</option>
+                        ))}
+                    </select>
+
+                    {/* Ô TÌM KIẾM THEO TÊN (CŨ) */}
                     <input 
                         type="text" 
                         className="form-control" 
