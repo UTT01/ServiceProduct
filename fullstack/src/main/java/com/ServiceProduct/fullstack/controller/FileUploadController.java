@@ -32,7 +32,7 @@ public class FileUploadController {
             Files.createDirectories(path.getParent());
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
             
-            return ResponseEntity.ok("http://localhost:8080/images/" + fileName);
+            return ResponseEntity.ok("http://localhost:8087/images/" + fileName);
         } catch (IOException e) {
             return ResponseEntity.internalServerError().body("Lỗi upload: " + e.getMessage());
         }

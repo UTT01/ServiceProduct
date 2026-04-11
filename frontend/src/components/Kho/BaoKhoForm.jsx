@@ -57,7 +57,7 @@ const BaoKhoForm = ({ nguyenLieus, onClose }) => {
             }
 
             const noiDungGop = baoKhoItems.map((item) => `- ${item.tenNguyenLieu}: ${item.noiDung}`).join('\n');
-            const NOTIFICATION_API_URL = 'http://localhost:8082/api/notifications/create';
+            const NOTIFICATION_API_URL = 'http://localhost:8089/api/notifications/create';
             const promises = [];
 
             danhSachQuanLy.forEach(maQL => {
@@ -77,7 +77,7 @@ const BaoKhoForm = ({ nguyenLieus, onClose }) => {
             onClose(); // Đóng form báo kho
         } catch (error) {
             console.error("Lỗi:", error);
-            alert("Đã xảy ra lỗi kết nối! Hãy chắc chắn ServiceUser (8086) và Notification (8082) đang chạy.");
+            alert("Đã xảy ra lỗi kết nối! Hãy chắc chắn ServiceUser (8086) và Notification (8089) đang chạy.");
         }
     };
 

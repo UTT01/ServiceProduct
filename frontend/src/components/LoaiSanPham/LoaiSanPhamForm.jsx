@@ -12,9 +12,9 @@ const LoaiSanPhamForm = ({ isEdit, initialData, onClose, onRefresh }) => {
         e.preventDefault();
         try {
             if (isEdit) {
-                await axios.put(`http://localhost:8080/api/v1/loai-san-pham/${formData.maLoaiSanPham}`, formData);
+                await axios.put(`http://localhost:8087/api/v1/loai-san-pham/${formData.maLoaiSanPham}`, formData);
             } else {
-                await axios.post('http://localhost:8080/api/v1/loai-san-pham', formData);
+                await axios.post('http://localhost:8087/api/v1/loai-san-pham', formData);
             }
             onRefresh(); // Gọi hàm load lại bảng của component cha
             onClose();   // Đóng Modal
@@ -23,7 +23,6 @@ const LoaiSanPhamForm = ({ isEdit, initialData, onClose, onRefresh }) => {
             alert("Đã xảy ra lỗi khi lưu!");
         }
     };
-
     return (
         <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog modal-dialog-centered">

@@ -17,7 +17,7 @@ export default function LoaiSanPhamList() {
 
     const fetchData = async () => {
         try {
-            const res = await axios.get('http://localhost:8080/api/v1/loai-san-pham');
+            const res = await axios.get('http://localhost:8087/api/v1/loai-san-pham');
             setDanhSachLoai(res.data);
         } catch (error) {
             console.error("Lỗi lấy dữ liệu:", error);

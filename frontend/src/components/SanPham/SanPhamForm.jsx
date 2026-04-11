@@ -19,22 +19,28 @@ const SanPhamForm = ({ isEditing, initialData, initialCongThuc, khoNguyenLieu, l
 
     // HÀM UPLOAD ẢNH
     const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-        const uploadFormData = new FormData();
-        uploadFormData.append('file', file);
+    const uploadFormData = new FormData();
+    uploadFormData.append('file', file);
 
-        try {
-            const response = await api.post('/upload', uploadFormData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-            setFormData(prev => ({ ...prev, duongDanHinh: response.data }));
-        } catch (error) {
-            console.error("Lỗi upload:", error);
-            alert("Lỗi khi tải ảnh lên máy chủ (Kiểm tra cổng 8080 và Controller)!");
-        }
-    };
+    try {
+        const response = await api.post('/upload', uploadFormData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        
+        // Đảm bảo URL ảnh có đầy đủ http://localhost:8087
+        const imageUrl = response.data.startsWith('http') 
+            ? response.data 
+            : `http://localhost:8087${response.data}`;
+            
+        setFormData(prev => ({ ...prev, duongDanHinh: imageUrl }));
+    } catch (error) {
+        console.error("Lỗi upload:", error);
+        alert("Lỗi khi tải ảnh lên máy chủ (Cổng 8087)!");
+    }
+};
 
     // THÊM NGUYÊN LIỆU VÀO CÔNG THỨC
     const themNguyenLieuVaoCongThuc = () => {
