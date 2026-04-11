@@ -2,10 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 // 1. Import đầy đủ các component
-import SanPhamList from './components/SanPhamList';
-import NguyenLieuList from './components/NguyenLieuList';
-import LoaiSanPhamList from './components/LoaiSanPhamList'; // Đảm bảo đã import cái này
-
+import SanPhamList from "./pages/SanPham/SanPhamList";
+import NguyenLieuList from "./pages/Kho/NguyenLieuList";
+import LoaiSanPhamList from "./pages/LoaiSanPham/LoaiSanPhamList";
 function App() {
   return (
     <Router>
