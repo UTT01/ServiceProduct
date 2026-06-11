@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 public class OrderRequestDTO {
+    private String maHoaDon;
     private String maBan;
     private List<ItemRequest> items;
     private String maCa;
@@ -26,6 +27,14 @@ public class OrderRequestDTO {
 
     public String getMaBan() {
         return maBan;
+    }
+
+    public String getMaHoaDon() {
+        return maHoaDon;
+    }
+
+    public void setMaHoaDon(String maHoaDon) {
+        this.maHoaDon = maHoaDon;
     }
 
     public void setMaBan(String maBan) {

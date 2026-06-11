@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import com.example.servicecafe.client.SanPhamClient;
 import com.example.servicecafe.client.StoreClient;
+import org.springframework.util.StringUtils;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,10 +94,14 @@ public class ThanhToanService {
                         if (spInfo != null && spInfo.getDanhSachCongThuc() != null) {
                             for (var recipe : spInfo.getDanhSachCongThuc()) {
                                 String maNL = recipe.getMaNguyenLieu();
+                                if (!StringUtils.hasText(maNL) || recipe.getSoLuong() == null || itemDto.getSoLuong() == null) {
+                                    System.err.println("Bo qua cong thuc thieu du lieu cho SP: " + itemDto.getMaSanPham());
+                                    continue;
+                                }
                                 // Định lượng 1 ly * Số lượng ly khách mua
-                                double dinhLuongCanTrừ = recipe.getSoLuong() * itemDto.getSoLuong();
+                                double dinhLuongCanTru = recipe.getSoLuong() * itemDto.getSoLuong();
                                 
-                                tongNguyenLieuCanTru.put(maNL, tongNguyenLieuCanTru.getOrDefault(maNL, 0.0) + dinhLuongCanTrừ);
+                                tongNguyenLieuCanTru.put(maNL, tongNguyenLieuCanTru.getOrDefault(maNL, 0.0) + dinhLuongCanTru);
                             }
                         }
                     } catch (Exception e) {

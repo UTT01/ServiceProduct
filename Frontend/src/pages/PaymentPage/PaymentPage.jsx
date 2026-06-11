@@ -14,7 +14,7 @@ const PaymentPage = () => {
     const {
         maHoaDon: maHDTuState,
         cart: cartTuState,
-        maCaOpen: maCaTuState,
+        maCa: maCaTuState,
         totalAmount: totalTuState,
         subTotal: subTotalTuState,
         manualDiscount,

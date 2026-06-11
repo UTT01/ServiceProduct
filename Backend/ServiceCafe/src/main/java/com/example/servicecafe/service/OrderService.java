@@ -222,6 +222,7 @@ public class OrderService {
 
         HoaDon hd = hdOpt.get();
         OrderRequestDTO dto = new OrderRequestDTO();
+        dto.setMaHoaDon(hd.getMaHoaDon());
         dto.setMaBan(hd.getMaBan());
 
 
