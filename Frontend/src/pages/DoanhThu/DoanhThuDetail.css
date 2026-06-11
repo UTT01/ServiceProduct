@@ -71,11 +71,8 @@
 .val { font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
 .val.cash { color: #10b981; }
 .val.transfer { color: #3b82f6; }
-<<<<<<< HEAD
 .val.income { color: #059669; }
 .val.expense { color: #e11d48; }
-=======
->>>>>>> c18f9dd6d403e3e90dd2b342a984881f2ccbafb7
 .val.big { font-size: 1.75rem; }
 
 /* Data Table Section */

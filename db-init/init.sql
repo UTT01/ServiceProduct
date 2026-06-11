@@ -33,13 +33,13 @@ GO
 -- =============================================
 -- 2. SERVICE POS (CAFE/ORDER)
 -- =============================================
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ServicePOS')
-CREATE DATABASE [ServicePOS];
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ServiceCafe')
+CREATE DATABASE [ServiceCafe];
 GO
-USE [ServicePOS]
+USE [ServiceCafe]
 GO
 CREATE TABLE [dbo].[HoaDon](
-	[maHoaDon] [varchar](20) NOT NULL PRIMARY KEY,
+	[maHoaDon] [varchar](40) NOT NULL PRIMARY KEY,
 	[maBan] [varchar](20) NULL,
 	[thoiGianVao] [datetime] NULL,
 	[thoiGianRa] [datetime] NULL,
@@ -51,7 +51,7 @@ CREATE TABLE [dbo].[HoaDon](
 );
 CREATE TABLE [dbo].[ChiTietHD](
 	[maChiTietHD] [varchar](50) NOT NULL PRIMARY KEY,
-	[maHoaDon] [varchar](20) NULL,
+	[maHoaDon] [varchar](40) NULL,
 	[maSanPham] [varchar](20) NULL,
 	[soLuong] [int] NULL,
 	[donGia] [float] NULL,
@@ -89,7 +89,6 @@ CREATE TABLE [dbo].[doanhthu](
 GO
 INSERT [dbo].[ca] VALUES (N'CA003', N'NV001', '2026-04-12', 1371000.00, N'Chiều 12/04', N'Mở', '16:59:15', NULL)
 GO
-<<<<<<< HEAD
 CREATE TABLE [dbo].[phieuthuchi](
 	[maPhieu] [varchar](50) NOT NULL,
 	[ghiChu] [nvarchar](255) NULL,
@@ -102,8 +101,6 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-=======
->>>>>>> c18f9dd6d403e3e90dd2b342a984881f2ccbafb7
 
 -- =============================================
 -- 4. SERVICE NOTIFICATION
@@ -151,10 +148,10 @@ GO
 -- =============================================
 -- 6. SERVICE PROMOTION
 -- =============================================
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'SerivcePromotion')
-CREATE DATABASE [SerivcePromotion];
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ServicePromotion')
+CREATE DATABASE [ServicePromotion];
 GO
-USE [SerivcePromotion]
+USE [ServicePromotion]
 GO
 CREATE TABLE [dbo].[KhuyenMai](
 	[ma_khuyen_mai] [varchar](20) NOT NULL PRIMARY KEY,
@@ -206,10 +203,10 @@ GO
 -- =============================================
 -- 9. SERVICE BAN (TABLE)
 -- =============================================
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ServiceBan')
-CREATE DATABASE [ServiceBan];
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ServiceTable')
+CREATE DATABASE [ServiceTable];
 GO
-USE [ServiceBan]
+USE [ServiceTable]
 GO
 CREATE TABLE [dbo].[khuvuc](
 	[maKhuVuc] [varchar](50) NOT NULL PRIMARY KEY,

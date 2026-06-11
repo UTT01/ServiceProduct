@@ -14,7 +14,6 @@
   animation: fadeIn 0.4s ease-out;
 }
 
-<<<<<<< HEAD
 .summary-cards-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -47,8 +46,6 @@
   font-weight: 800;
 }
 
-=======
->>>>>>> c18f9dd6d403e3e90dd2b342a984881f2ccbafb7
 /* Quick Action Cards */
 .action-cards-grid {
   display: grid;
@@ -224,7 +221,6 @@
 .btn-submit-action.thu { background: var(--emerald-500); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
 .btn-submit-action.chi { background: var(--rose-500); box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3); }
 
-<<<<<<< HEAD
 @media (max-width: 1200px) {
   .summary-cards-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -239,7 +235,5 @@
   }
 }
 
-=======
->>>>>>> c18f9dd6d403e3e90dd2b342a984881f2ccbafb7
 @keyframes modalScale { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

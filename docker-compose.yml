@@ -17,6 +17,12 @@ services:
       - ./db-init/entrypoint.sh:/usr/config/entrypoint.sh
     networks:
       - cafe-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -C -Q \"SELECT 1\" || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
     # LỆNH CHẠY SCRIPT ĐỢI DB KHỞI ĐỘNG XONG MỚI BƠM DỮ LIỆU
     entrypoint: /bin/bash -c "/opt/mssql/bin/sqlservr & /usr/config/entrypoint.sh & wait"
 
@@ -40,7 +46,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - eureka-server
+      eureka-server:
+        condition: service_started
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     networks:
@@ -56,8 +63,10 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - sqlserver
-      - eureka-server
+      sqlserver:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=ServiceCafe;encrypt=true;trustServerCertificate=true;
       - SPRING_DATASOURCE_USERNAME=sa
@@ -72,8 +81,10 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      - sqlserver
-      - eureka-server
+      sqlserver:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=ServicePromotion;encrypt=true;trustServerCertificate=true;
       - SPRING_DATASOURCE_USERNAME=sa
@@ -88,8 +99,10 @@ services:
     ports:
       - "8083:8083"
     depends_on:
-      - sqlserver
-      - eureka-server
+      sqlserver:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=ServiceTable;encrypt=true;trustServerCertificate=true;
       - SPRING_DATASOURCE_USERNAME=sa
@@ -104,8 +117,10 @@ services:
     ports:
       - "8084:8084"
     depends_on:
-      - sqlserver
-      - eureka-server
+      sqlserver:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=ServiceDoanhThu;encrypt=true;trustServerCertificate=true;
       - SPRING_DATASOURCE_USERNAME=sa
@@ -120,8 +135,10 @@ services:
     ports:
       - "8085:8085"
     depends_on:
-      - sqlserver
-      - eureka-server
+      sqlserver:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=ServiceSalary;encrypt=true;trustServerCertificate=true;
       - SPRING_DATASOURCE_USERNAME=sa
@@ -136,8 +153,10 @@ services:
     ports:
       - "8086:8086"
     depends_on:
-      - sqlserver
-      - eureka-server
+      sqlserver:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=ServiceUser;encrypt=true;trustServerCertificate=true;
       - SPRING_DATASOURCE_USERNAME=sa
@@ -152,8 +171,10 @@ services:
     ports:
       - "8087:8087"
     depends_on:
-      - sqlserver
-      - eureka-server
+      sqlserver:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=ServiceProduct;encrypt=true;trustServerCertificate=true;
       - SPRING_DATASOURCE_USERNAME=sa
@@ -168,8 +189,10 @@ services:
     ports:
       - "8088:8088"
     depends_on:
-      - sqlserver
-      - eureka-server
+      sqlserver:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=ServiceStore;encrypt=true;trustServerCertificate=true;
       - SPRING_DATASOURCE_USERNAME=sa
@@ -184,8 +207,10 @@ services:
     ports:
       - "8089:8089"
     depends_on:
-      - sqlserver
-      - eureka-server
+      sqlserver:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=ServiceNotification;encrypt=true;trustServerCertificate=true;
       - SPRING_DATASOURCE_USERNAME=sa

@@ -9,7 +9,7 @@ import java.util.List;
 public class HoaDon {
 
     @Id
-    @Column(name = "maHoaDon", length = 20)
+    @Column(name = "maHoaDon", length = 40)
     private String maHoaDon;
 
     @Column(name = "maBan", length = 20)

@@ -48,22 +48,7 @@ public class OrderController {
         return ResponseEntity.ok("Thanh toán thành công cho đơn: " + maHD);
     }
 
-    @GetMapping("/getProducts")
-    public ResponseEntity<List<SanPhamDTO>> getProducts() {
-        List<SanPhamDTO> dsSanpham = List.of(
-                new SanPhamDTO("CF01", "Cafe Đen Đá", 25000.0),
-                new SanPhamDTO("CF02", "Cafe Sữa Sài Gòn", 29000.0),
-                new SanPhamDTO("TS01", "Trà Sữa Trân Châu", 35000.0),
-                new SanPhamDTO("TS02", "Trà Đào Cam Sả", 32000.0),
-                new SanPhamDTO("CF03", "Cafe Đen Nóng", 25000.0),
-                new SanPhamDTO("CF04", "Cafe Sữa Đá", 29000.0),
-                new SanPhamDTO("TS03", "Trà Sữa Vải", 35000.0),
-                new SanPhamDTO("TS04", "Trà Mãng Cầu", 32000.0),
-                new SanPhamDTO("BK01", "Bánh Mì Que", 15000.0)
-        );
 
-        return ResponseEntity.ok(dsSanpham);
-    }
 
     @GetMapping("/loadBan/{maBan}")
     public ResponseEntity<OrderRequestDTO> getHoaDon(@PathVariable String maBan){

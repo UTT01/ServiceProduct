@@ -1,10 +1,21 @@
 #!/bin/bash
 
-# Đợi SQL Server khởi động hoàn toàn (khoảng 20 giây)
 echo "Lado Coffee: Đang đợi SQL Server khởi động..."
-sleep 20s
+sleep 40s
 
-# Chạy lệnh sqlcmd để thực thi file init.sql
-# Lưu ý: Mật khẩu P phải khớp với MSSQL_SA_PASSWORD trong docker-compose.yml
-/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P CafePos@123456 -d master -i /usr/config/init.sql
-echo "Lado Coffee: Đã khởi tạo Database thành công!"
+echo "Lado Coffee: Bắt đầu khởi tạo database..."
+
+/opt/mssql-tools18/bin/sqlcmd \
+-S localhost \
+-U sa \
+-P "CafePos@123456" \
+-C \
+-d master \
+-i /usr/config/init.sql
+
+if [ $? -eq 0 ]; then
+  echo "Lado Coffee: Đã khởi tạo Database thành công!"
+else
+  echo "Lado Coffee: Khởi tạo Database thất bại!"
+  exit 1
+fi

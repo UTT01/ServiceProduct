@@ -34,7 +34,7 @@ public class OrderService {
     @Transactional
     public HoaDon createOrder(OrderRequestDTO request) {
 
-        String maHD = "HD" + System.currentTimeMillis(); // Tạo mã HD duy nhất theo thời gian
+        String maHD = HoaDonIdGenerator.newHoaDonId();
         HoaDon hd = new HoaDon();
         hd.setMaHoaDon(maHD);
         hd.setMaBan(request.getMaBan());
@@ -49,7 +49,7 @@ public class OrderService {
         // 3. Duyệt danh sách món ăn và lưu ChiTietHoaDon
         int index = 1;
         for (OrderRequestDTO.ItemRequest item : request.getItems()) {
-            String maChiTietHD = maHD + "CTHD" + (index++);
+            String maChiTietHD = HoaDonIdGenerator.newChiTietHoaDonId();
             ChiTietHD ct = new ChiTietHD();
             ct.setMaChiTietHD(maChiTietHD);
             ct.setMaHoaDon(savedHD);
@@ -107,7 +107,7 @@ public class OrderService {
                 } else {
                     // Món mới hoàn toàn
                     ChiTietHD ct = new ChiTietHD();
-                    ct.setMaChiTietHD(hd.getMaHoaDon() + "CTHD" + System.nanoTime());
+                    ct.setMaChiTietHD(HoaDonIdGenerator.newChiTietHoaDonId());
                     ct.setMaHoaDon(hd);
                     ct.setMaSanPham(newItem.getMaSanPham());
                     ct.setSoLuong(newItem.getSoLuong());
@@ -133,7 +133,7 @@ public class OrderService {
             }
         } else {
             // --- TRƯỜNG HỢP 2: BÀN MỚI TINH (CREATE) ---
-            String maHD = "HD" + System.currentTimeMillis();
+            String maHD = HoaDonIdGenerator.newHoaDonId();
             hd = new HoaDon();
             hd.setMaHoaDon(maHD);
             hd.setMaBan(request.getMaBan());
@@ -145,7 +145,7 @@ public class OrderService {
             int index = 1;
             for (OrderRequestDTO.ItemRequest item : request.getItems()) {
                 ChiTietHD ct = new ChiTietHD();
-                ct.setMaChiTietHD(maHD + "CTHD" + (index++));
+                ct.setMaChiTietHD(HoaDonIdGenerator.newChiTietHoaDonId());
                 ct.setMaHoaDon(hd);
                 ct.setMaSanPham(item.getMaSanPham());
                 ct.setSoLuong(item.getSoLuong());

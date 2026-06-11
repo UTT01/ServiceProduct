@@ -1,12 +1,13 @@
 package com.example.servicecafe.client;
 
-import com.example.servicecafe.dto.ThanhToanDTO;
+import com.example.servicecafe.dto.SanPhamDTO; // Đảm bảo dùng SanPhamDTO có chứa danh sách công thức
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "product-service", url = "http://localhost:8083")
+// Đổi localhost thành service-product và port thành 8087
+@FeignClient(name = "SERVICE-PRODUCT", path = "/v1/san-pham")
 public interface SanPhamClient {
     @GetMapping("/{id}")
-    ThanhToanDTO getProductById(@PathVariable("id") String id);
+    SanPhamDTO getProductById(@PathVariable("id") String id);
 }

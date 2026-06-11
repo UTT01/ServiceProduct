@@ -65,4 +65,23 @@ public class SanPhamService {
     public void deleteSanPham(String maSanPham) {
         sanPhamRepository.deleteById(maSanPham);
     }
+    @Transactional
+    public SanPhamResponse getSanPhamById(String id) {
+        SanPham sp = sanPhamRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm có mã: " + id));
+
+        SanPhamResponse dto = new SanPhamResponse();
+        dto.setMaSanPham(sp.getMaSanPham());
+        dto.setTenSanPham(sp.getTenSanPham());
+        dto.setDonGia(sp.getDonGia());
+        dto.setDuongDanHinh(sp.getDuongDanHinh());
+        dto.setTrangThai(sp.getTrangThai());
+        if (sp.getLoaiSanPham() != null) {
+            dto.setMaLoaiSanPham(sp.getLoaiSanPham().getMaLoaiSanPham());
+            dto.setTenLoaiSanPham(sp.getLoaiSanPham().getTenLoaiSanPham());
+        }
+        // Thêm dòng này:
+        dto.setDanhSachCongThuc(sp.getDanhSachCongThuc()); 
+        return dto;
+    }
 }
