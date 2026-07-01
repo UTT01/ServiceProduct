@@ -109,7 +109,7 @@ const OrderPage = () => {
                 const orderRes = await orderApi.loadBan(maBan);
                 if (orderRes.data && orderRes.data.items?.length > 0) {
                     const data = orderRes.data;
-                    let idTuXuLy = data.maHoaDon || data.items[0].maChiTietHD.split('CTHD')[0];
+                    let idTuXuLy = data.maHoaDon || null;
                     
                     // Thêm tenSanPham từ products list nếu item không có
                     const itemsWithNames = data.items.map(item => {
@@ -167,7 +167,8 @@ const OrderPage = () => {
                 };
                 
                 const res = await orderApi.staffCreate(orderData);
-                const newMaHD = res.data.savedHD?.maHoaDon || res.data.maHoaDon || maHoaDon;
+                const newMaHD = res.data.hoaDon?.maHoaDon || res.data.savedHD?.maHoaDon || res.data.maHoaDon || maHoaDon;
+                if (newMaHD) setMaHoaDon(newMaHD);
                 
                 await tableApi.updateTrangThai(maBan, 'PENDING');
                 setOriginalCart(cart.map(item => ({ ...item, slipNote: undefined })));
@@ -240,12 +241,13 @@ const OrderPage = () => {
                     handleConfirmOrder(false);
                 }
         };
-    const handleGoToPayment = () => {
-            console.log("🚀 Chuyển sang thanh toán (Giỏ hàng tạm thời)");
+    const handleGoToPayment = async () => {
+            const finalMaHoaDon = await handleConfirmOrder(true);
+            if (!finalMaHoaDon) return;
             
             navigate(`/payment/${maBan}`, {
                 state: { 
-                    maHoaDon, 
+                    maHoaDon: finalMaHoaDon, 
                     cart, 
                     maCa: maCaOpen, 
                     totalAmount, 

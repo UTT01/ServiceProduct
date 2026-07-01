@@ -21,4 +21,12 @@ public class CongThuc {
 
     @Column(name = "soLuong")
     private Double soLuong;
+
+    public String getMaSanPham() {
+        return id != null ? id.getMaSanPham() : null;
+    }
+
+    public String getMaNguyenLieu() {
+        return id != null ? id.getMaNguyenLieu() : null;
+    }
 }
