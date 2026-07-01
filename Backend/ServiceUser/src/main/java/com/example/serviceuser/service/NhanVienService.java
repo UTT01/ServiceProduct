@@ -27,12 +27,11 @@ public class NhanVienService {
     private final IdGeneratorService idGenerator;
     private final PasswordEncoder passwordEncoder;
 
-    // Khởi tạo RestTemplate (Hoặc inject từ Config nếu bạn đã tạo Bean)
+    // Khởi tạo RestTemplate
     private final RestTemplate restTemplate = new RestTemplate();
 
     // 1. LẤY DANH SÁCH: Chỉ lấy người đang làm
     public List<NhanVien> findAll() {
-        // Giả sử bạn đã thêm findByTrangThai vào Repository
         return nhanVienRepository.findByTrangThai("Đang làm");
     }
 
@@ -42,7 +41,7 @@ public class NhanVienService {
         NhanVien nv = nhanVienRepository.findById(maNV)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên"));
 
-        // 2. Kiểm tra lịch sử bên ServiceSalary (Feign tự đính kèm Token nhờ Interceptor)
+        // 2. Kiểm tra lịch sử bên ServiceSalary
         boolean coLichSu = false;
         try {
             coLichSu = salaryClient.hasHistory(maNV);
@@ -50,7 +49,7 @@ public class NhanVienService {
             coLichSu = true; // Nếu service lương sập, mặc định xóa mềm để an toàn
         }
 
-        // 3. Xử lý Tài khoản (Quan trọng để fix lỗi 500)
+        // 3. Xử lý Tài khoản
         taiKhoanRepository.findByNhanVienMaNhanVien(maNV).ifPresent(tk -> {
             nv.setTaiKhoan(null);      // Bước 1: Gỡ liên kết trong Java
             taiKhoanRepository.delete(tk); // Bước 2: Lệnh xóa tài khoản
@@ -65,7 +64,7 @@ public class NhanVienService {
             try {
                 nhanVienRepository.delete(nv); // Xóa cứng
             } catch (Exception e) {
-                nv.setTrangThai("Đã nghỉ"); // Quay xe sang xóa mềm nếu nảy sinh lỗi FK khác
+                nv.setTrangThai("Đã nghỉ");
                 nhanVienRepository.save(nv);
             }
         }
@@ -77,7 +76,7 @@ public class NhanVienService {
         nv.setMaNhanVien(idGenerator.taoMaNhanVien(loai));
         nv.setNgayVaoLam(java.time.LocalDate.now());
 
-        // Luôn set trạng thái mặc định khi thêm mới
+        // Trạng thái mặc định khi thêm mới
         nv.setTrangThai("Đang làm");
 
         NhanVien savedNv = nhanVienRepository.save(nv);

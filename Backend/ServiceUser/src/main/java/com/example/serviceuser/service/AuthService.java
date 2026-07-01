@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class AuthService {
     private EmailService emailService;
 
     /**
-     * LOGIC REGISTER: Tạo Thương hiệu -> Tạo Nhân viên Quản lý -> Tạo Tài khoản Admin
+     * LOGIC REGISTER: Tạo Nhân viên Quản lý -> Tạo Tài khoản Admin
      */
     @Transactional
     public String register(RegisterRequest request) {
@@ -46,10 +47,10 @@ public class AuthService {
         nv.setTenNhanVien(request.getTenNhanVien());
         nv.setNgaySinh(request.getNgaySinh());
         nv.setChucVu("Quản lý");
-        nv.setTienLuong(0.0); // Mặc định 0, có thể cập nhật sau
+        nv.setTienLuong(0.0);
         nv.setNgayVaoLam(LocalDate.now());
 
-        // Lưu nhân viên trước để lấy object liên kết cho tài khoản
+        // Lưu nhân viên
         NhanVien savedNv = nhanVienRepository.save(nv);
 
         // 3. Tạo Tài khoản liên kết (ADMIN)
@@ -59,7 +60,7 @@ public class AuthService {
         tk.setTenDangNhap(request.getTenDangNhap());
         tk.setMatKhau(passwordEncoder.encode(request.getMatKhau()));
         tk.setLoaiTaiKhoan("ADMIN");
-        tk.setNhanVien(savedNv); // Liên kết với nhân viên vừa tạo
+        tk.setNhanVien(savedNv);
 
         taiKhoanRepository.save(tk);
 
@@ -73,6 +74,10 @@ public class AuthService {
         TaiKhoan tk = taiKhoanRepository.findByTenDangNhap(username)
                 .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
 
+        if (!StringUtils.hasText(password)) {
+            throw new RuntimeException("Vui lòng điền đầy đủ thông tin!");
+        }
+
         if (!passwordEncoder.matches(password, tk.getMatKhau())) {
             throw new RuntimeException("Sai mật khẩu!");
         }
@@ -84,7 +89,7 @@ public class AuthService {
         response.put("token", token);
         response.put("role", tk.getLoaiTaiKhoan());
 
-        // Lấy thông tin từ bảng nhân viên để hiển thị trên Sidebar React
+        // Lấy thông tin từ bảng nhân viên
         if (tk.getNhanVien() != null) {
             response.put("maNhanVien", tk.getNhanVien().getMaNhanVien());
             response.put("tenNhanVien", tk.getNhanVien().getTenNhanVien());
@@ -95,7 +100,7 @@ public class AuthService {
 
 
     /**
-     * QUÊN MẬT KHẨU: Gửi OTP (giả lập qua Console)
+     * QUÊN MẬT KHẨU: Gửi OTP
      */
     @Transactional
     public String sendOTP(String email) {
@@ -158,7 +163,7 @@ public class AuthService {
             throw new RuntimeException("Mật khẩu mới phải >= 6 ký tự");
         }
 
-        // 5. Không trùng mật khẩu cũ
+        // 5. Kiểm tra mật khẩu cũ và mới
         if (passwordEncoder.matches(newPassword, tk.getMatKhau())) {
             throw new RuntimeException("Mật khẩu mới không được trùng mật khẩu cũ");
         }
